@@ -31,7 +31,9 @@ namespace Marvin.IDP
 
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Address,
+                        "roles"
                     },
                     ClientSecrets = { new Secret("secret".Sha256()) }
                 }
@@ -43,6 +45,8 @@ namespace Marvin.IDP
             var identityResources = new List<IdentityResource>();
             identityResources.Add(new IdentityResources.OpenId());
             identityResources.Add(new IdentityResources.Profile());
+            identityResources.Add(new IdentityResources.Address());
+            identityResources.Add(new IdentityResource("roles", "Your role(s)",new List<string> { "role" }));
 
             return identityResources;
         }
@@ -58,7 +62,9 @@ namespace Marvin.IDP
                     Claims = new List<Claim>
                     {
                         new Claim("given_name", "Frank"),
-                        new Claim("family_name", "Underwood")
+                        new Claim("family_name", "Underwood"),
+                        new Claim("address", "Main Road 1"),
+                        new Claim("role", "FreeUser")
                     }
                 }
                 );
@@ -71,7 +77,10 @@ namespace Marvin.IDP
                     Claims = new List<Claim>
                     {
                         new Claim("given_name", "Claire"),
-                        new Claim("family_name", "Underwood")
+                        new Claim("family_name", "Underwood"),
+                        new Claim("address", "Big Street 2"),
+                        new Claim("role", "PayingUser")
+
                     }
                 }
                 );
