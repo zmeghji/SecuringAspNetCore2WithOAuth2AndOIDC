@@ -74,7 +74,10 @@ namespace ImageGallery.Client.Controllers
 
                 return View(galleryIndexViewModel);
             }          
-
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden || response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("AccessDenied", "Authorization");
+            }
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
 
@@ -149,11 +152,13 @@ namespace ImageGallery.Client.Controllers
             throw new Exception($"A problem happened while calling the API: {response.ReasonPhrase}");
         }
         
+        [Authorize(Roles ="PayingUser")]
         public IActionResult AddImage()
         {
             return View();
         }
 
+        [Authorize(Roles = "PayingUser")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)

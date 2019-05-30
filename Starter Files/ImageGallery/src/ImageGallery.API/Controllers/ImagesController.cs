@@ -2,15 +2,18 @@
 using ImageGallery.API.Helpers;
 using ImageGallery.API.Services;
 using ImageGallery.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ImageGallery.API.Controllers
 {
     [Route("api/images")]
+    [Authorize]
     public class ImagesController : Controller
     {
         private readonly IGalleryRepository _galleryRepository;
@@ -26,8 +29,9 @@ namespace ImageGallery.API.Controllers
         [HttpGet()]
         public IActionResult GetImages()
         {
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub").Value;
             // get from repo
-            var imagesFromRepo = _galleryRepository.GetImages();
+            var imagesFromRepo = _galleryRepository.GetImages(ownerId);
 
             // map to model
             var imagesToReturn = Mapper.Map<IEnumerable<Model.Image>>(imagesFromRepo);
@@ -51,6 +55,7 @@ namespace ImageGallery.API.Controllers
             return Ok(imageToReturn);
         }
 
+        [Authorize(Roles ="PayingUser")]
         [HttpPost()]
         public IActionResult CreateImage([FromBody] ImageForCreation imageForCreation)
         {
