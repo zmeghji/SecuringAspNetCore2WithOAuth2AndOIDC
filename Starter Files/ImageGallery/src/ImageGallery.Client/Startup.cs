@@ -27,6 +27,16 @@ namespace ImageGallery.Client
         {
             // Add framework services.
             services.AddMvc();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanOrderFrame",
+                    policyBuilder =>
+                    {
+                        policyBuilder.RequireAuthenticatedUser();
+                        policyBuilder.RequireClaim("country", "be");
+                        policyBuilder.RequireClaim("subscriptionLevel", "PayingUser");
+                    });
+            });
             services.AddAuthentication(options =>
             {
                 options.DefaultScheme = "Cookies";
@@ -51,6 +61,8 @@ namespace ImageGallery.Client
                     options.Scope.Add("address");
                     options.Scope.Add("roles");
                     options.Scope.Add("imagegalleryapi");
+                    options.Scope.Add("country");
+                    options.Scope.Add("subscriptionLevel");
                     options.SaveTokens = true;
                     options.ClientSecret = "secret";
                     options.GetClaimsFromUserInfoEndpoint = true;
@@ -59,6 +71,8 @@ namespace ImageGallery.Client
                     options.ClaimActions.DeleteClaim("idp");
                     //options.ClaimActions.DeleteClaim("address");
                     options.ClaimActions.MapUniqueJsonKey("role", "role");
+                    options.ClaimActions.MapUniqueJsonKey("country", "country");
+                    options.ClaimActions.MapUniqueJsonKey("subscriptionLevel", "subscriptionLevel");
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = JwtClaimTypes.GivenName,

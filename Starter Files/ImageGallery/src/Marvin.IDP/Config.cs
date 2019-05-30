@@ -42,7 +42,9 @@ namespace Marvin.IDP
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
                         "roles",
-                        "imagegalleryapi"
+                        "imagegalleryapi",
+                        "country",
+                        "subscriptionLevel"
                     },
                     ClientSecrets = { new Secret("secret".Sha256()) }
                 }
@@ -56,6 +58,8 @@ namespace Marvin.IDP
             identityResources.Add(new IdentityResources.Profile());
             identityResources.Add(new IdentityResources.Address());
             identityResources.Add(new IdentityResource("roles", "Your role(s)",new List<string> { "role" }));
+            identityResources.Add(new IdentityResource("country", "The country you live in", new List<string> { "country" }));
+            identityResources.Add(new IdentityResource("subscriptionLevel", "Your subscription level", new List<string> { "subscriptionLevel" }));
 
             return identityResources;
         }
@@ -73,7 +77,9 @@ namespace Marvin.IDP
                         new Claim("given_name", "Frank"),
                         new Claim("family_name", "Underwood"),
                         new Claim("address", "Main Road 1"),
-                        new Claim("role", "FreeUser")
+                        new Claim("role", "FreeUser"),
+                        new Claim("country", "nl"),
+                        new Claim("subscriptionLevel", "FreeUser")
                     }
                 }
                 );
@@ -88,7 +94,9 @@ namespace Marvin.IDP
                         new Claim("given_name", "Claire"),
                         new Claim("family_name", "Underwood"),
                         new Claim("address", "Big Street 2"),
-                        new Claim("role", "PayingUser")
+                        new Claim("role", "PayingUser"),
+                        new Claim("country", "be"),
+                        new Claim("subscriptionLevel", "PayingUser")
 
                     }
                 }
