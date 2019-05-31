@@ -56,6 +56,33 @@ namespace ImageGallery.Client.Controllers
         }
         public async Task Logout()
         {
+            var discoveryClient = new DiscoveryClient("https://localhost:44305/");
+            var metaDataResponse = await discoveryClient.GetAsync();
+            var revocationClient = new TokenRevocationClient(
+                metaDataResponse.RevocationEndpoint,
+                "imagegalleryclient",
+                "secret");
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                var revokeTokenResponse = await revocationClient.RevokeAccessTokenAsync(accessToken);
+                if (revokeTokenResponse.IsError)
+                {
+                    throw new Exception("Error when revoking access token", revokeTokenResponse.Exception);
+                }
+
+            }
+            var refreshToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                var revokeTokenResponse = await revocationClient.RevokeRefreshTokenAsync(refreshToken);
+                if (revokeTokenResponse.IsError)
+                {
+                    throw new Exception("Error when revoking refresh token", revokeTokenResponse.Exception);
+                }
+
+            }
+
             await HttpContext.SignOutAsync("Cookies");
             await HttpContext.SignOutAsync("oidc");
         }
